@@ -1,4 +1,4 @@
-# Simple ViT
+# Mini ViT
 
 This is a minimal ViT Implementation from scratch for demonstration/education purposes.
 
