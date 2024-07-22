@@ -14,6 +14,6 @@ Implementation:
 + [Simple Transformer](https://github.com/chunyang-w/mini-ViT/blob/1fa33a7705bc7cc759d8a7be130b058d352dc9b0/vit.py#L122-L186)
 + [ViT](https://github.com/chunyang-w/mini-ViT/blob/1fa33a7705bc7cc759d8a7be130b058d352dc9b0/vit.py#L189-L250)
 
-Tested on MNIST dataset:
+[Tested on MNIST dataset](https://github.com/chunyang-w/mini-ViT/blob/main/demo.ipynb):
 
 ![image](https://github.com/user-attachments/assets/8c9ffc74-e9be-44cc-bdbc-c4d1b28f0ef2)
