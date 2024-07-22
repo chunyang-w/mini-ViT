@@ -16,4 +16,5 @@ Implementation:
 
 [Tested on MNIST dataset](https://github.com/chunyang-w/mini-ViT/blob/main/demo.ipynb):
 
+<img width="735" alt="image" src="https://github.com/user-attachments/assets/8c9ffc74-e9be-44cc-bdbc-c4d1b28f0ef2">
 ![image](https://github.com/user-attachments/assets/8c9ffc74-e9be-44cc-bdbc-c4d1b28f0ef2)
