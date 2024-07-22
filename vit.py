@@ -197,7 +197,7 @@ class ViT(nn.Module):
     5. Go thru Transformer.
     6. Linear Projection layer.
     """
-    def __init__(self, img_h, img_w, num_class, patch_size, dim, num_channel=3):  # noqa
+    def __init__(self, img_h, img_w, num_class, patch_size, dim, num_channel=3, num_trans_layer=1):  # noqa
         """  # noqa
         Args:
             img_h, img_w (int):         Height & Width of the input image.
@@ -223,7 +223,7 @@ class ViT(nn.Module):
         self.pos_emb = nn.Parameter(torch.zeros(1, num_patch+1, dim))
 
         # Transformer
-        self.transformer = Transformer(dim, dim, dim, num_layer=1)
+        self.transformer = Transformer(dim, dim, dim, num_layer=num_trans_layer)  # noqa
 
         # Final Linear Layer - Input should be of shape (batch_size, dim)
         self.linear_out = nn.Linear(dim, num_class)
