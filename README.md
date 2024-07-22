@@ -1,6 +1,6 @@
 # Mini ViT
 
-This is a minimal ViT Implementation from scratch for demonstration/education purposes.
+This is a minimal ViT implementation from scratch for demonstrational/educational purposes.
 
 <img width="735" alt="image" src="https://github.com/user-attachments/assets/35fb427d-6c64-4e5b-9820-5d70de1160f9">
 
