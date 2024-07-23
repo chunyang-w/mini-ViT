@@ -7,7 +7,8 @@ from einops import repeat
 
 
 class Attention(nn.Module):
-    """Attention with scaled (default) dot-product matrix multiplication.
+    """
+    Attention with scaled (default) dot-product matrix multiplication.
     """
     def __init__(self):
         super(Attention, self).__init__()
@@ -43,9 +44,9 @@ class MultiheadAttention(nn.Module):
     Multihead Self-Attention implementation:
 
     1. Use Linear Layer to project q, k, v to hidden dimension.
-    2. Split those projected q, k, v tensors into smaller chunks. (That's why hidden dimension size should be divisible by num_head)  # noqa
-    3. Apply attention layer to those mini-chunks. (This is the multihead part).
-    4. Concatenate those processed mini-chunks, return this as the final output.
+    2. Split those projected q, k, and v tensors into smaller chunks. (That's why hidden dimension size should be divisible by num_head)  # noqa
+    3. Apply the attention layer to those mini-chunks. (This is the multihead part).
+    4. Concatenate those processed mini-chunks, and return this as the final output.
     """
     def __init__(self, n_emb, n_head=8, bias=False, return_atten=False, dropout=0.0):  # noqa
         """
@@ -78,8 +79,8 @@ class MultiheadAttention(nn.Module):
         Args:
             q, k, v (torch.Tensor): of shape (batch_size, seq_length, n_emb).\
                 The embedding dim of q, k, v is the same (equal to n_emb)\
-                this is a simplyfied implementation. In more complexed cases\
-                where other type of attention (e.g. cross-attention) is needed,\
+                this is a simplified implementation. In more complex cases\
+                where another type of attention (e.g. cross-attention) is needed,\
                 this version may not suffice the need.
         """
         bs, seq_len, n_emb = q.shape
@@ -89,7 +90,7 @@ class MultiheadAttention(nn.Module):
         k_p = self.k_proj(k)
         v_p = self.v_proj(v)
 
-        # After projection, q_p, k_p, and v_p has the same shape: (batch_size, seq_length, n_emb)  # noqa
+        # After projection, q_p, k_p, and v_p have the same shape: (batch_size, seq_length, n_emb)  # noqa
         # split them into smaller chunks (this is the multihead part!)
         q_p = q_p.view(bs, seq_len, self.n_head, self.head_dim)
         k_p = k_p.view(bs, seq_len, self.n_head, self.head_dim)
@@ -97,7 +98,7 @@ class MultiheadAttention(nn.Module):
 
         # Then permute the dimension (batch_size, seq_length, n_head, head_dim) -> (batch_size, n_head, seq_length, head_dim)  # noqa
         # Because we do not want n_head dimension be involved in the attention calculation  # noqa
-        #   i.e. each data along n_head dimension should be treated as a individual seuqence.  # noqa
+        #   i.e. each data along n_head dimension should be treated as an individual sequence.  # noqa
         #   i.e. this is the meaning of multi-head processing.
         q_p = q_p.transpose(1, 2)
         k_p = k_p.transpose(1, 2)
@@ -109,7 +110,7 @@ class MultiheadAttention(nn.Module):
         atten = attention_layer(q_p, k_p, v_p, dropout=self.dropout)
         if self.return_atten:
             atten_score = attention_layer(q_p, k_p, v_p, return_score=True)
-        # reshape the attention ouput, back to shape of (batch_size, n_head, seq_length, head_dim)  # noqa
+        # reshape the attention output, back to shape of (batch_size, n_head, seq_length, head_dim)  # noqa
         # The .contiguos() method is used to address incontiguous memory introduced by transpose methods  # noqa
         #   P.S. the .view() method won't work without this operation.
         atten = atten.transpose(1, 2).contiguous().view(bs, seq_len, n_emb)
@@ -123,10 +124,10 @@ class Transformer(nn.Module):
     """  # noqa
     Transformer Implementation.
 
-    This layer will stack several multi-head attention layer with Linear Projection Layer \
+    This layer will stack several multi-head attention layers with Linear Projection Layer \
         with residual connection and layer norm.
     The input should be of shape (batch_size, seq_length, n_in)
-    The ouput will be of shape   (batch_size, seq_length, n_out)
+    The output will be of shape   (batch_size, seq_length, n_out)
 
     Args:
         n_in        (int):  Input dimension.
@@ -141,7 +142,7 @@ class Transformer(nn.Module):
         self.n_model = n_model
         self.num_layer = num_layer
         self.bias = bias
-        # layer lists: each transfomer block layer has:
+        # layer lists: each transformer block layer has:
         #   + 1 multi-head attention layer
         #   + 1 linear layer
         #   + 2 layernorm layer
@@ -157,7 +158,7 @@ class Transformer(nn.Module):
 
     def transformer_block(self, x, layer_idx):
         """
-        Transfomer block
+        Transformer block
 
         input is of shape (batch_size, seq_length, n_model)
         """
@@ -166,11 +167,11 @@ class Transformer(nn.Module):
         linear_layer = self.linear_layers[layer_idx]
         layernorm2 = self.layernorm2[layer_idx]
 
-        # First go thru attention layer:
+        # First go thru the attention layer:
         residual_atten = atten_layer(x, x, x)  # Q, K, V are the same - self-attention part  # noqa
         x = x + residual_atten                 # Residual connection
         x = layernorm1(x)
-        # Then go thru linear layer:
+        # Then go thru the linear layer:
         residual_linear = linear_layer(x)
         x = self.act(x)
         x = x + residual_linear
@@ -203,7 +204,7 @@ class ViT(nn.Module):
             img_h, img_w (int):         Height & Width of the input image.
             num_class    (int):         Number of total classes in the dataset.
             patch_size   (int):         The size of the patch window.
-            dim          (int):         The dimension of which the model operates on.
+            dim          (int):         The dimension on which the model operates on.
             num_channel  (int):         The number of channels of the input image.
         """
         super(ViT, self).__init__()
@@ -241,10 +242,10 @@ class ViT(nn.Module):
         x = torch.cat([cls_token, patch], dim=1)
         # 2. Attach embedding - positional embedding
         x = x + self.pos_emb
-        # 3. go thru transformer
+        # 3. Go thru transformer
         x = self.transformer(x)
-        # 4. get output class token
+        # 4. Get output class token
         x = x[:, 0]  # of shape (batch_size, dim)
-        # 5. go thru linear classification layer:
+        # 5. Go thru linear classification layer:
         x = self.linear_out(x)
         return x
